@@ -1,22 +1,25 @@
 #root {
   max-width: 1280px;
   margin: 0 auto;
+  margin-top: 1%;
   padding: 2rem;
   text-align: center;
+  border: 3px solid rgb(196, 224, 230);
 }
 
 .logo {
   position: fixed;
   top: 2%;
   left: 1%;
-  height: 6em;
-  padding: 1.5em;
+  height: 8em;
   will-change: filter;
   transition: filter 300ms;
 }
+
 .logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
+  filter: drop-shadow(0 0 2em #61dafbaa);
 }
+
 .logo.react:hover {
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
@@ -37,32 +40,44 @@
 }
 
 .title {
-  margin-bottom: 25%;
+  margin-top: 0;
+  margin-bottom: 10%;
   color: rgb(188, 155, 209);
   text-decoration: underline;
 }
 
-.number-input {
-  padding-top: 3%;
-  padding-bottom: 3%;
-  margin-top: 30%;
-  margin-bottom: 10%;
-  border: 2px solid gainsboro;
+.result {
+  border: 3px solid gainsboro;
   border-radius: 8px;
+  background-color: azure;
+  height: 120px;
+  margin-bottom: 7%;
+  margin-left: 5%;
+  margin-right: 5%;
+}
+
+.result h3 {
+  display: inline-block;
+}
+
+.result h2 {
+  margin-top: 0%;
 }
 
 .calculator-body {
   display: flex;
-  align-items: top;
+  align-items: stretch;
   justify-items: center;
-  margin-bottom: 200px;
+  margin-bottom: 15%;
+  margin-left: 5%;
 }
 
 .numbers {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  column-gap: 3%;
+  grid-template-columns: 100px 100px 100px;
+  column-gap: 6%;
   row-gap: 3%;
+  margin-right: 6%;
 }
 
 .number-btn,
@@ -75,9 +90,24 @@
 .operators {
   display: flex;
   flex-direction: column;
-  margin-left: 7%;
+  margin-left: 6%;
+  margin-right: 0;
 }
+
 .operators .operator-btn {
-  margin-bottom: 9%;
+  margin-bottom: 10%;
   background-color: #61dafbaa;
+}
+
+.equals-btn {
+  background-color: #61dafbaa;
+  border: 2px solid gainsboro;
+  font-size: x-large;
+  margin-bottom: 0;
+}
+
+.clear-btn {
+  font-size: large;
+  padding-right: 7px;
+  padding-left: 7px;
 }
