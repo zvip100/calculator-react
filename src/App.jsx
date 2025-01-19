@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import calculator_logo from "./assets/calculator.svg";
-import { calculator, numbers, operators } from "./calculator";
+import delete_icon from "./assets/delete.svg";
+import equals_icon from "./assets/equals.svg";
+import { calculator, numbers, operators, allValues, icons } from "./calculator";
 import "./App.css";
 
 function App() {
@@ -11,9 +13,65 @@ function App() {
   const [result, setResult] = useState(null);
   const [showResult, setShowResult] = useState(false);
   const [disableNumBtn, setDisableNumBtn] = useState(false);
+  const [keyValue, setKeyValue] = useState("");
+  const [run, setRun] = useState(false);
+  const [showDeleteBtn, setShowDeleteBtn] = useState(false);
 
-  console.log(firstNumber);
-  console.log(selectedOperator);
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      const keyPressed = event.key;
+      console.log(`Key pressed: ${keyPressed}`);
+
+      if (
+        keyPressed === "Enter" ||
+        keyPressed === "Delete" ||
+        keyPressed === "Backspace"
+      ) {
+        event.preventDefault();
+        setKeyValue(keyPressed);
+        setRun(true);
+        return;
+      }
+
+      allValues.forEach((element) => {
+        if (element == keyPressed) {
+          console.log(element);
+          console.log(typeof element);
+          setKeyValue(keyPressed);
+          setRun(true);
+          return;
+        }
+      });
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    // Clean up the event listener when the component unmounts
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
+
+  (() => {
+    if (run) {
+      if (
+        keyValue === "+" ||
+        keyValue === "-" ||
+        keyValue === "*" ||
+        keyValue === "/"
+      )
+        handleOperatorClick(keyValue);
+      else if (keyValue === "=" || keyValue === "Enter") {
+        if (!firstNumber || !secondNumber) return;
+        calculate(true);
+      } else if (keyValue === ".") addDecimalPoint();
+      else if (keyValue === "Delete") clearInput();
+      else if (keyValue === "Backspace") deleteChar();
+      else handleNumberClick(keyValue);
+
+      setRun(false);
+    }
+  })();
 
   function handleNumberClick(num) {
     if (disableNumBtn) {
@@ -38,18 +96,55 @@ function App() {
       else setSecondNumber(num);
     }
 
-    console.log("first: ", firstNumber);
-    console.log("second: ", secondNumber);
+    //console.log("first: ", firstNumber);
+    //console.log("second: ", secondNumber);
 
     setShowSelectedNums(true);
+    setShowDeleteBtn(true);
   }
 
-  function addDecimalPoint(number, setNumber) {
-    let num = Number.parseInt(number);
-    let fixedNum = num.toFixed(2);
-    let sub = fixedNum.substring(0, fixedNum.length - 2);
-    console.log(sub);
-    setNumber(sub);
+  function addDecimalPoint() {
+    if (disableNumBtn) return;
+
+    const addDot = (number, setNumber) => {
+      let WholeNum = Number.parseInt(number);
+      let fixedNum = WholeNum.toFixed(2);
+      let subNum = fixedNum.substring(0, fixedNum.length - 2);
+      console.log(subNum);
+      setNumber(subNum);
+    };
+
+    if (!selectedOperator && firstNumber) {
+      if (firstNumber.includes(".")) return;
+      addDot(firstNumber, setFirstNumber);
+    } else if (selectedOperator && secondNumber) {
+      if (secondNumber.includes(".")) return;
+      addDot(secondNumber, setSecondNumber);
+    }
+  }
+
+  function handleOperatorClick(operator) {
+    if (!firstNumber) return;
+
+    setSelectedOperator(operator);
+
+    if (secondNumber && !result) {
+      const num = calculate(false);
+
+      setFirstNumber(num);
+      setSecondNumber(null);
+      setShowResult(false);
+      return;
+    }
+
+    if (result) {
+      let num = Number.parseFloat(result);
+
+      setFirstNumber(num);
+      setSecondNumber(null);
+      setShowResult(false);
+      setDisableNumBtn(false);
+    }
   }
 
   function calculate(disable) {
@@ -95,6 +190,36 @@ function App() {
     setSecondNumber(null);
     setSelectedOperator(null);
     setDisableNumBtn(false);
+    setShowDeleteBtn(false);
+  }
+
+  function deleteChar() {
+    if (!firstNumber) return;
+
+    let currentInput;
+    let newInput;
+
+    const removeChar = (number, setNumber) => {
+      currentInput = number;
+
+      try {
+        newInput = currentInput.slice(0, -1);
+        setNumber(newInput);
+      } catch (e) {
+        console.error(e);
+      }
+    };
+
+    if (firstNumber && !selectedOperator) {
+      if (firstNumber.length === 1) setShowDeleteBtn(false);
+      removeChar(firstNumber, setFirstNumber);
+    } else if (selectedOperator && !secondNumber) {
+      setSelectedOperator(null);
+    } else if (secondNumber && !result) {
+      removeChar(secondNumber, setSecondNumber);
+    } else {
+      clearInput();
+    }
   }
 
   return (
@@ -118,6 +243,14 @@ function App() {
             <h2>{result}</h2>
           </>
         )}
+
+        {showDeleteBtn && (
+          <div className="delete-btn">
+            <button type="button" className="operator-btn" onClick={deleteChar}>
+              <img src={delete_icon} width="40px" height="40px"></img>
+            </button>
+          </div>
+        )}
       </div>
 
       <div className="calculator-body">
@@ -137,15 +270,7 @@ function App() {
           <button
             type="button"
             className="number-btn"
-            onClick={() => {
-              if (disableNumBtn) return;
-
-              if (!selectedOperator && firstNumber) {
-                addDecimalPoint(firstNumber, setFirstNumber);
-              } else if (selectedOperator && secondNumber) {
-                addDecimalPoint(secondNumber, setSecondNumber);
-              }
-            }}
+            onClick={addDecimalPoint}
           >
             .
           </button>
@@ -167,28 +292,10 @@ function App() {
               className="operator-btn"
               value={operator}
               onClick={(event) => {
-                if (!firstNumber) return;
-
-                setSelectedOperator(event.target.value);
-
-                if (secondNumber && !result) {
-                  const num = calculate(false);
-                  setFirstNumber(num);
-                  setSecondNumber(null);
-                  setShowResult(false);
-                  return;
-                }
-
-                if (result) {
-                  let num = Number.parseFloat(result);
-                  setFirstNumber(num);
-                  setSecondNumber(null);
-                  setShowResult(false);
-                  setDisableNumBtn(false);
-                }
+                handleOperatorClick(event.target.value);
               }}
             >
-              {operator}
+              <img src={icons[index]} width="15px" height="15px"></img>
             </button>
           ))}
           <button

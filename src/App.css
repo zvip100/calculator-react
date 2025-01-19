@@ -51,9 +51,10 @@
   border-radius: 8px;
   background-color: azure;
   height: 120px;
-  margin-bottom: 7%;
+  margin-bottom: 10%;
   margin-left: 5%;
   margin-right: 5%;
+  position: relative;
 }
 
 .result h3 {
@@ -68,7 +69,7 @@
   display: flex;
   align-items: stretch;
   justify-items: center;
-  margin-bottom: 15%;
+  margin-bottom: 5%;
   margin-left: 5%;
 }
 
@@ -87,6 +88,11 @@
   font-size: x-large;
 }
 
+.number-btn:active,
+.operator-btn:active {
+  opacity: 50%;
+}
+
 .operators {
   display: flex;
   flex-direction: column;
@@ -94,7 +100,8 @@
   margin-right: 0;
 }
 
-.operators .operator-btn {
+.operators .operator-btn,
+.delete-btn .operator-btn {
   margin-bottom: 10%;
   background-color: #61dafbaa;
 }
@@ -110,4 +117,16 @@
   font-size: large;
   padding-right: 7px;
   padding-left: 7px;
+}
+
+.delete-btn {
+  position: absolute;
+  bottom: -0.5%;
+  right: -0.5%;
+}
+
+.delete-btn .operator-btn {
+  font-size: medium;
+  margin-bottom: 0;
+  padding: 0;
 }

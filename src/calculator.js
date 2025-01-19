@@ -1,3 +1,8 @@
+import plus_icon from "./assets/plus.svg";
+import minus_icon from "./assets/minus.svg";
+import multiplication_icon from "./assets/multiplication.svg";
+import division_icon from "./assets/division.svg";
+
 export const calculator = {
   add: (a, b) => {
     let result = Number.parseFloat(a) + Number.parseFloat(b);
@@ -28,6 +33,15 @@ for (let i = 1; i < 10; i++) {
 
 numbers.push(0);
 
-console.log(numbers);
-
 export const operators = ["+", "-", "*", "/"];
+
+export const allValues = [...numbers, ...operators, "=", "."];
+
+export const icons = [
+  plus_icon,
+  minus_icon,
+  multiplication_icon,
+  division_icon,
+];
+
+
